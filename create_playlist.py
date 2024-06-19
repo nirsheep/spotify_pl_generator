@@ -1,5 +1,3 @@
-# create_playlist.py
-
 import openai
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -10,15 +8,18 @@ openai.api_key = API.OPENAI_API_KEY
 
 # Function to get song suggestions from OpenAI
 def get_song_suggestions(prompt, num_songs=100):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
         max_tokens=1000,
         n=1,
         stop=None,
         temperature=0.7
     )
-    song_list = response.choices[0].text.strip().split('\n')
+    song_list = response.choices[0].message['content'].strip().split('\n')
     return song_list[:num_songs]
 
 # Function to create a playlist and add songs to Spotify
